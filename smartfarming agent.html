@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMART-FARMING AGENT</title>
+</head>
+<body>
+    <h1>SMART-FARMING AGENT</h1>
+
+    <div id="root"></div>  
+
+    <script>
+      window.wxOConfiguration = {
+        orchestrationID: "472b593f0cc5425d8b633493c247858d_8ae9d291-724c-45a9-b8fb-0334f243992d",
+        hostURL: "https://au-syd.watson-orchestrate.cloud.ibm.com",
+        rootElementID: "root",
+        deploymentPlatform: "ibmcloud",
+        crn: "crn:v1:bluemix:public:watsonx-orchestrate:au-syd:a/472b593f0cc5425d8b633493c247858d:8ae9d291-724c-45a9-b8fb-0334f243992d::",
+        chatOptions: {
+            agentId: "86158730-1c4d-46cc-8b61-79f7475a4bc2",
+            agentEnvironmentId: "44fb547d-ac40-4be0-a7a6-226c71b9ec3c",
+        }
+      };
+      setTimeout(function () {
+        const script = document.createElement('script');
+        script.src = `${window.wxOConfiguration.hostURL}/wxochat/wxoLoader.js?embed=true`;
+        script.addEventListener('load', function () {
+            wxoLoader.init();
+        });
+        document.head.appendChild(script);
+      }, 0);
+    </script>
+</body>
+</html>
