@@ -1,35 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SMART-FARMING AGENT</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>watsonx Orchestrate Chat</title>
+
+  <link rel="preconnect" href="https://jp-tok.watson-orchestrate.cloud.ibm.com" crossorigin />
+  <link rel="dns-prefetch" href="https://jp-tok.watson-orchestrate.cloud.ibm.com" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #24a148;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 999;
+      transition: opacity 0.4s ease;
+    }
+
+    #loading-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid #ddd;
+      border-top-color: #0f62fe;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loading-screen p {
+      color: #555;
+      font-size: 14px;
+    }
+
+    #root {
+      margin-top: 48px;
+      height: calc(100vh - 48px);
+    }
+  </style>
 </head>
 <body>
-    <h1>SMART-FARMING AGENT</h1>
 
-    <div id="root"></div>  
+  <header>
+    <h1>🤖 watsonx Orchestrate</h1>
+    <div class="status">
+      <div class="status-dot"></div>
+      <span id="status-text">Connecting…</span>
+    </div>
+  </header>
 
-    <script>
-      window.wxOConfiguration = {
-        orchestrationID: "472b593f0cc5425d8b633493c247858d_8ae9d291-724c-45a9-b8fb-0334f243992d",
-        hostURL: "https://au-syd.watson-orchestrate.cloud.ibm.com",
-        rootElementID: "root",
-        deploymentPlatform: "ibmcloud",
-        crn: "crn:v1:bluemix:public:watsonx-orchestrate:au-syd:a/472b593f0cc5425d8b633493c247858d:8ae9d291-724c-45a9-b8fb-0334f243992d::",
-        chatOptions: {
-            agentId: "86158730-1c4d-46cc-8b61-79f7475a4bc2",
-            agentEnvironmentId: "44fb547d-ac40-4be0-a7a6-226c71b9ec3c",
-        }
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading your AI agent…</p>
+  </div>
+
+  <div id="root"></div>
+
+  <script>
+    window.wxOConfiguration = {
+      orchestrationID:    "undefined",
+      hostURL:            "https://jp-tok.watson-orchestrate.cloud.ibm.com",
+      rootElementID:      "root",
+      deploymentPlatform: "ibmcloud",
+      crn: "crn:v1:bluemix:public:watsonx-orchestrate:jp-tok:a/472b593f0cc5425d8b633493c247858d:fa4aeb38-5b1c-467f-8889-b8168b7c4a42::",
+      chatOptions: {
+        agentId: "1b8a62df-4276-48e7-8a48-2da646eb158d"
+      }
+    };
+
+    function loadChatScript() {
+      var HOST   = window.wxOConfiguration.hostURL;
+      var script = document.createElement("script");
+      script.src = HOST + "/wxochat/wxoLoader.js?embed=true";
+
+      script.onload = function () {
+        wxoLoader.init();
+        setTimeout(function () {
+          document.getElementById("loading-screen").classList.add("hide");
+          document.getElementById("status-text").textContent = "Connected";
+        }, 600);
       };
-      setTimeout(function () {
-        const script = document.createElement('script');
-        script.src = `${window.wxOConfiguration.hostURL}/wxochat/wxoLoader.js?embed=true`;
-        script.addEventListener('load', function () {
-            wxoLoader.init();
-        });
-        document.head.appendChild(script);
-      }, 0);
-    </script>
+
+      script.onerror = function () {
+        document.querySelector("#loading-screen p").textContent =
+          "⚠️ Could not connect. Please check your network and try again.";
+        document.getElementById("status-text").textContent = "Unavailable";
+      };
+
+      document.head.appendChild(script);
+    }
+
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(loadChatScript, { timeout: 500 });
+    } else {
+      setTimeout(loadChatScript, 0);
+    }
+  </script>
+
 </body>
 </html>
